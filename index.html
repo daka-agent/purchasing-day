@@ -1308,11 +1308,12 @@ else if (view.kind === 'report') main = reportHTML(view);
 else {
 let bodyView = view;
 let expandBar = '';
-if (needCut) {
+const showCut = needCut && !EXPANDED; // v1.6.2：展开后就不再折叠（原来 EXPANDED 只记了数，没参与渲染）
+if (showCut) {
 bodyView = Object.assign({}, view, { body: view.body.slice(0, 2) });
 expandBar = '<div class="pad"><div class="expandbar" data-act="expand">展开全文（还有 ' + (view.body.length - 2) + ' 段）▼</div></div>';
 }
-main = bodyHTML(bodyView) + expandBar + choicesHTML(view, needCut);
+main = bodyHTML(bodyView) + expandBar + choicesHTML(view, showCut);
 }
 $('#app').classList.toggle('probemode', view.kind === 'probe');
 $('#app').innerHTML = memBar + hudHTML() + echoBars + teachBar + main + footHTML();
@@ -1499,7 +1500,10 @@ const last = S.toolUses[S.toolUses.length - 1];
 toast(last.correct ? ['排序正确：' + last.ranks.join(' < ')] : ['算完了，但排序值得怀疑——核对口径']);
 }
 } else if (act === 'expand') {
-EXPANDED = true; render(VIEW);
+EXPANDED = true;
+const keepY = window.scrollY; // 展开后别把读者弹回顶部，视线留在原处
+render(VIEW);
+window.scrollTo(0, keepY);
 } else if (act === 'teachon') {
 teachTaps++;
 if (teachTaps >= 5 && !TEACH) { TEACH = true; stageHTML(); toast(['教师模式已开启']); }
