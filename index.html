@@ -948,6 +948,9 @@ const inline = (s) => esc(s).replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
 const SEGS = (m) => (m >= 80 ? 5 : m >= 65 ? 4 : m >= 50 ? 3 : m >= 35 ? 2 : 1);
 function dayText() {
 const d = new Date();
+const w = d.getDay();
+if (w === 6) d.setDate(d.getDate() + 2);
+else if (w === 0) d.setDate(d.getDate() + 1);
 return (d.getMonth() + 1) + '月' + d.getDate() + '日 周' + '日一二三四五六'[d.getDay()];
 }
 function hudHTML() {
